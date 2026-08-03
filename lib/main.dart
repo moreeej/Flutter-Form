@@ -52,19 +52,22 @@ class _HomePageState extends State<HomePage> {
       'imageUrl':
           'https://images.unsplash.com/photo-1493246507139-91e8fad9978e?auto=format&fit=crop&w=800&q=80',
       'title': 'Weekend Escape',
-      'description': 'A little break, a lot of inspiration, and beautiful views.',
+      'description':
+          'A little break, a lot of inspiration, and beautiful views.',
     },
     {
       'imageUrl':
           'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=800&q=80',
       'title': 'City Lights',
-      'description': 'Late evening walks and glowing skies make everything feel cinematic.',
+      'description':
+          'Late evening walks and glowing skies make everything feel cinematic.',
     },
     {
       'imageUrl':
           'https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=800&q=80',
       'title': 'Cozy Cabin',
-      'description': 'Relaxing nights and warm lights make the perfect retreat.',
+      'description':
+          'Relaxing nights and warm lights make the perfect retreat.',
     },
     {
       'imageUrl':
@@ -76,19 +79,22 @@ class _HomePageState extends State<HomePage> {
       'imageUrl':
           'https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=800&q=80',
       'title': 'Road Trip',
-      'description': 'Open roads, clear skies, and a playlist that never gets old.',
+      'description':
+          'Open roads, clear skies, and a playlist that never gets old.',
     },
     {
       'imageUrl':
           'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
       'title': 'Beach Day',
-      'description': 'Golden sand, blue water, and a slow afternoon well spent.',
+      'description':
+          'Golden sand, blue water, and a slow afternoon well spent.',
     },
     {
       'imageUrl':
           'https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=800&q=80',
       'title': 'Golden Hour',
-      'description': 'The sky turns soft and everything feels a little more magical.',
+      'description':
+          'The sky turns soft and everything feels a little more magical.',
     },
     {
       'imageUrl':
@@ -100,7 +106,8 @@ class _HomePageState extends State<HomePage> {
       'imageUrl':
           'https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=800&q=80',
       'title': 'Night Out',
-      'description': 'Bright streets, great company, and moments worth remembering.',
+      'description':
+          'Bright streets, great company, and moments worth remembering.',
     },
   ];
 
@@ -147,7 +154,10 @@ class _HomePageState extends State<HomePage> {
     }
 
     setState(() {
-      _visiblePostCount = (_visiblePostCount + _pageSize).clamp(0, _allPosts.length);
+      _visiblePostCount = (_visiblePostCount + _pageSize).clamp(
+        0,
+        _allPosts.length,
+      );
       _isLoadingMore = false;
     });
   }
@@ -216,70 +226,72 @@ class _HomePageState extends State<HomePage> {
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   child: ListView.builder(
                     controller: _scrollController,
-                    itemCount: visiblePosts.length + (hasMore || _isLoadingMore ? 1 : 0),
+                    itemCount:
+                        visiblePosts.length +
+                        (hasMore || _isLoadingMore ? 1 : 0),
                     itemBuilder: (context, index) {
-                    if (index == visiblePosts.length) {
-                      return const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 16),
-                        child: Center(
-                          child: CircularProgressIndicator(),
+                      if (index == visiblePosts.length) {
+                        return const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 16),
+                          child: Center(child: CircularProgressIndicator()),
+                        );
+                      }
+
+                      final post = visiblePosts[index];
+                      return Card(
+                        margin: const EdgeInsets.only(bottom: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ClipRRect(
+                              borderRadius: const BorderRadius.vertical(
+                                top: Radius.circular(16),
+                              ),
+                              child: Image.network(
+                                post['imageUrl']!,
+                                height: 180,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    post['title']!,
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(post['description']!),
+                                  const SizedBox(height: 12),
+                                  Row(
+                                    children: [
+                                      IconButton(
+                                        onPressed: () {},
+                                        icon: const Icon(Icons.favorite_border),
+                                      ),
+                                      IconButton(
+                                        onPressed: () {},
+                                        icon: const Icon(
+                                          Icons.comment_outlined,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       );
-                    }
-
-                    final post = visiblePosts[index];
-                    return Card(
-                      margin: const EdgeInsets.only(bottom: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ClipRRect(
-                            borderRadius: const BorderRadius.vertical(
-                              top: Radius.circular(16),
-                            ),
-                            child: Image.network(
-                              post['imageUrl']!,
-                              height: 180,
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  post['title']!,
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(post['description']!),
-                                const SizedBox(height: 12),
-                                Row(
-                                  children: [
-                                    IconButton(
-                                      onPressed: () {},
-                                      icon: const Icon(Icons.favorite_border),
-                                    ),
-                                    IconButton(
-                                      onPressed: () {},
-                                      icon: const Icon(Icons.comment_outlined),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
                     },
                   ),
                 ),

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:demo/pages/login.dart';
 
 void main() {
   runApp(const Signup());
@@ -63,9 +64,9 @@ class _SimpleFormPageState extends State<SimpleFormPage> {
 
       if (response.user != null) {
         final randomId = DateTime.now().millisecondsSinceEpoch;
-        final hashedPassword = sha256.convert(
-          utf8.encode(_passwordController.text),
-        ).toString();
+        final hashedPassword = sha256
+            .convert(utf8.encode(_passwordController.text))
+            .toString();
 
         await Supabase.instance.client.from('users').insert({
           'id': randomId,
@@ -75,7 +76,9 @@ class _SimpleFormPageState extends State<SimpleFormPage> {
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Account created for ${_emailController.text.trim()}'),
+            content: Text(
+              'Account created for ${_emailController.text.trim()}',
+            ),
           ),
         );
       } else {
@@ -85,14 +88,14 @@ class _SimpleFormPageState extends State<SimpleFormPage> {
       }
     } on AuthException catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.message)));
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Unexpected error: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Unexpected error: $e')));
     } finally {
       if (mounted) {
         setState(() {
@@ -121,65 +124,94 @@ class _SimpleFormPageState extends State<SimpleFormPage> {
                   child: SingleChildScrollView(
                     child: Form(
                       key: _formKey,
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            TextFormField(
-                              controller: _emailController,
-                              keyboardType: TextInputType.emailAddress,
-                              decoration: const InputDecoration(
-                                labelText: 'Email',
-                                border: OutlineInputBorder(),
-                                prefixIcon: Icon(Icons.email),
+                      child: Column(
+                        children: [
+                          // Email
+                          ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 400),
+                            child: SizedBox(
+                              width: double.infinity,
+                              child: TextFormField(
+                                controller: _emailController,
+                                keyboardType: TextInputType.emailAddress,
+                                decoration: const InputDecoration(
+                                  labelText: 'Email',
+                                  border: OutlineInputBorder(),
+                                  prefixIcon: Icon(Icons.email),
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return 'Please enter your email';
+                                  }
+                                  if (!value.contains('@')) {
+                                    return 'Please enter a valid email';
+                                  }
+                                  return null;
+                                },
                               ),
-                              validator: (value) {
-                                if (value == null || value.trim().isEmpty) {
-                                  return 'Please enter your email';
-                                }
-                                if (!value.contains('@')) {
-                                  return 'Please enter a valid email';
-                                }
-                                return null;
-                              },
                             ),
-                            const SizedBox(height: 16),
-                            TextFormField(
-                              controller: _passwordController,
-                              obscureText: true,
-                              decoration: const InputDecoration(
-                                labelText: 'Password',
-                                border: OutlineInputBorder(),
-                                prefixIcon: Icon(Icons.lock),
+                          ),
+
+                          const SizedBox(height: 16),
+
+                          // Password
+                          ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 400),
+                            child: SizedBox(
+                              width: double.infinity,
+                              child: TextFormField(
+                                controller: _passwordController,
+                                obscureText: true,
+                                decoration: const InputDecoration(
+                                  labelText: 'Password',
+                                  border: OutlineInputBorder(),
+                                  prefixIcon: Icon(Icons.lock),
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return 'Please enter a password';
+                                  }
+                                  if (value.length < 6) {
+                                    return 'Password must be at least 6 characters';
+                                  }
+                                  return null;
+                                },
                               ),
-                              validator: (value) {
-                                if (value == null || value.trim().isEmpty) {
-                                  return 'Please enter a password';
-                                }
-                                if (value.length < 6) {
-                                  return 'Password must be at least 6 characters';
-                                }
-                                return null;
-                              },
                             ),
-                            const SizedBox(height: 24),
-                            Align(
-                              alignment: Alignment.center,
-                              child: ElevatedButton.icon(
+                          ),
+
+                          const SizedBox(height: 24),
+
+                          // Button
+                          ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 400),
+                            child: SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
                                 onPressed: _isSubmitting ? null : _submitForm,
-                                icon: _isSubmitting
-                                    ? const SizedBox(
-                                        width: 18,
-                                        height: 18,
-                                        child: CircularProgressIndicator(strokeWidth: 2),
-                                      )
-                                    : const Icon(Icons.person_add),
-                                label: Text(_isSubmitting ? 'Signing up...' : 'Sign Up'),
+                                child: Text(
+                                  _isSubmitting ? 'Signing up...' : 'Sign Up',
+                                ),
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+
+                          const SizedBox(height: 16),
+
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const Login(),
+                                ),
+                              );
+                            },
+                            child: const Text(
+                              'Already have an account? Log in',
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),

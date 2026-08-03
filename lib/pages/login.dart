@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:demo/pages/signup.dart';
+import 'package:demo/main.dart';
 
 void main() {
   runApp(const Login());
@@ -30,113 +31,120 @@ class SimpleFormPage extends StatefulWidget {
 
 class _SimpleFormPageState extends State<SimpleFormPage> {
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
   final _emailController = TextEditingController();
-  final _messageController = TextEditingController();
+  final _passwordController = TextEditingController();
 
   @override
   void dispose() {
-    _nameController.dispose();
     _emailController.dispose();
-    _messageController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Thanks ${_nameController.text.trim()}! Your form was submitted.',
-          ),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Logging in...')));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Fill in the form'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Form(
-          key: _formKey,
-          child: ListView(
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 12),
-              Text(
-                'Simple Contact Form',
-                style: Theme.of(context).textTheme.headlineSmall,
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Welcome to Mobile Legends',
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => const HomePage()),
+                      );
+                    },
+                    icon: const Icon(Icons.home),
+                    tooltip: 'Go to homepage',
+                  ),
+                ],
               ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: _nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Name',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.person),
+              const SizedBox(height: 32),
+              Expanded(
+                child: Center(
+                  child: Form(
+                    key: _formKey,
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 400),
+                      child: ListView(
+                        shrinkWrap: true,
+                        children: [
+                          TextFormField(
+                            controller: _emailController,
+                            keyboardType: TextInputType.emailAddress,
+                            decoration: const InputDecoration(
+                              labelText: 'Email',
+                              border: OutlineInputBorder(),
+                              prefixIcon: Icon(Icons.email),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.trim().isEmpty) {
+                                return 'Please enter your email';
+                              }
+                              if (!value.contains('@')) {
+                                return 'Please enter a valid email';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          TextFormField(
+                            controller: _passwordController,
+                            obscureText: true,
+                            decoration: const InputDecoration(
+                              labelText: 'Password',
+                              border: OutlineInputBorder(),
+                              prefixIcon: Icon(Icons.lock),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.trim().isEmpty) {
+                                return 'Please enter your password';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 24),
+                          ElevatedButton(
+                            onPressed: _submitForm,
+                            child: const Text('Log in'),
+                          ),
+                          const SizedBox(height: 16),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const Signup(),
+                                ),
+                              );
+                            },
+                            child: const Text("Don't have an account? Sign up"),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Please enter your name';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.email),
-                ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Please enter your email';
-                  }
-                  if (!value.contains('@')) {
-                    return 'Please enter a valid email';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _messageController,
-                maxLines: 4,
-                decoration: const InputDecoration(
-                  labelText: 'Message',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.message),
-                ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Please enter a message';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton.icon(
-                onPressed: _submitForm,
-                icon: const Icon(Icons.send),
-                label: const Text('Submit'),
-              ),
-              const SizedBox(height: 24),
-              TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const Signup()),
-                  );
-                },
-                child: const Text('Don\'t have an account? Sign up'),
               ),
             ],
           ),
